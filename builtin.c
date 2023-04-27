@@ -27,8 +27,24 @@ static void pwd(char** args, int argcp);
 int builtIn(char** args, int argcp)
 {
     //write your code
-
-
+    if(strcmp(args[0], "pwd") == 0) {
+      return 1;
+    }
+    if(strcmp(args[0], "cd") == 0) {
+      return 1;      
+    }
+    if(strcmp(args[0], "ls") == 0) {
+      return 1;
+    }
+    if(strcmp(args[0], "exit") == 0) {
+      return 1;
+    }
+    if(strcmp(args[0], "cp") == 0) {
+      return 1;
+    }
+    if(strcmp(args[0], "touch") == 0) {
+      return 1;
+    }    
     // if no builtin
     return 0;
 }
