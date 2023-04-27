@@ -27,11 +27,15 @@ static void pwd(char** args, int argcp);
 int builtIn(char** args, int argcp)
 {
     //write your code
+
+
+    // if no builtin
+    return 0;
 }
 
 static void exitProgram(char** args, int argcp)
 {
- //write your code
+  //write your code
 }
 
 static void pwd(char** args, int argpc)
