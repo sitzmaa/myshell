@@ -56,5 +56,6 @@ char** argparse(char* line, int* argcp)
     args[i] = malloc(word_length+1);
     strncpy(args[i],line, word_length);
   }
+  return args;
 }
 
