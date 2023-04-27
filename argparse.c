@@ -46,6 +46,15 @@ static int argCount(char*line)
 */
 char** argparse(char* line, int* argcp)
 {
-  //write your code
+  // **FREE THIS LATER**
+  int word_length;
+  char** args = calloc(*argcp, sizeof(char*));
+  for (int i = 0; i <  *argcp; i++) {
+    for (word_length = 0; !isspace(line); i++, line++);
+    line -= word_length;
+    // **FREE** 
+    args[i] = malloc(word_length+1);
+    strncpy(args[i],line, word_length);
+  }
 }
 
