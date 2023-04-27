@@ -31,21 +31,27 @@ int builtIn(char** args, int argcp)
 {
     //write your code
     if(strcmp(args[0], "pwd") == 0) {
+      pwd(args, argcp);
       return 1;
     }
     if(strcmp(args[0], "cd") == 0) {
+      cd(args, argcp);
       return 1;      
     }
     if(strcmp(args[0], "ls") == 0) {
+      ls(args, argcp);
       return 1;
     }
     if(strcmp(args[0], "exit") == 0) {
+      exitProgram(args, argcp);
       return 1;
     }
     if(strcmp(args[0], "cp") == 0) {
+      cp(args,argcp);
       return 1;
     }
     if(strcmp(args[0], "touch") == 0) {
+      touch(args,argcp);
       return 1;
     }    
     // if no builtin
@@ -54,16 +60,23 @@ int builtIn(char** args, int argcp)
 
 static void exitProgram(char** args, int argcp)
 {
+  if (argcp > 2) {
+    perror("Improper usage\nUsage: exit [exit_code]\n");
+    exit(-1);
+  }
   //write your code
   int exit_code = 0;
   if (argcp > 1) {
-    exit_code = (args[1] - '0');
+    exit_code = (*args[1] - '0');
   }
   exit(exit_code);
 }
 
 static void pwd(char** args, int argcp)
 {
+  if (argcp > 1) {
+    perror("Improper usage\nUsage: pwd");
+  }
   //write your code
 
 }
@@ -71,22 +84,38 @@ static void pwd(char** args, int argcp)
 
 static void cd(char** args, int argcp)
 {
+  if (argcp != 2) {
+    perror("Improper usage\nUsage: cd [directory]");
+  }
  //write your code
 }
+
+
 /*
-* Group A built in
+* Group A built in functions
 */
-static void cp(char** args, int arcp)
+// Copy a file
+static void cp(char** args, int argcp)
 {
-
+  if (argcp != 3) {
+    perror("Improper usage\nUsage: cp <src_file_name target_file_name>");
+  }
 }
 
-static void ls(char** args, int arcp)
+/*
+* List everything in current directory
+* arg -l will create a verbose list
+*/
+static void ls(char** args, int argcp)
 {
-
+  if (argcp > 2 || argcp < 1) {
+    perror("Improper usage\nUsage: ls [-l]");
+  }
 }
 
-static void touch(char** args, int arcp)
+static void touch(char** args, int argcp)
 {
-
+  if (argcp < 3) {
+    perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
+  }
 }

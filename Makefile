@@ -9,4 +9,5 @@ myshell.o: myshell.c
 	gcc -g -c myshell.c
 
 clean:
+	rm -f myshell
 	rm -f *.o *.bak *~* *.exe

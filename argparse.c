@@ -25,12 +25,12 @@ static int argCount(char*line)
   * return count
   */
   int count = 0;
-  while(line != '\0') {
-    if (isspace(line)) { 
-      for(; isspace(line);line++);
+  while(*line != '\0') {
+    if (isspace(*line)) { 
+      for(; isspace(*line);line++);
     } else {
       count++;
-      for(; !isspace(line) && line != '\0';line++);
+      for(; !isspace(*line) && *line != '\0';line++);
     }
   }
   return count;
@@ -51,7 +51,7 @@ char** argparse(char* line, int* argcp)
   int word_length;
   char** args = calloc(*argcp, sizeof(char*));
   for (int i = 0; i <  *argcp; i++) {
-    for (word_length = 0; !isspace(line); i++, line++);
+    for (word_length = 0; !isspace(*line); i++, line++);
     line -= word_length;
     // **FREE** 
     args[i] = malloc(word_length+1);
