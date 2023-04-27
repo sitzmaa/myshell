@@ -16,7 +16,24 @@
 */
 static int argCount(char*line)
 {
- //write your code
+  /*
+  * while the line is not at null terminator
+  * if the current value is a white space
+  * reach the end of whitespace subsequence
+  * else
+  * increment count then reach the end of the subsequence of chars
+  * return count
+  */
+  int count = 0;
+  while(line != '\0') {
+    if (isspace(line)) { 
+      for(; isspace(line);line++);
+    } else {
+      count++;
+      for(; !isspace(line) && line != '\0';line++);
+    }
+  }
+  return count;
 }
 
 
