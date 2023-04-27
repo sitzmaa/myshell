@@ -17,6 +17,9 @@
 static void exitProgram(char** args, int argcp);
 static void cd(char** args, int argpcp);
 static void pwd(char** args, int argcp);
+static void cp(char** args, int argcp);
+static void touch(char** args, int argcp);
+static void ls(char** args, int argcp);
 
 
 /* builtIn
@@ -52,9 +55,14 @@ int builtIn(char** args, int argcp)
 static void exitProgram(char** args, int argcp)
 {
   //write your code
+  int exit_code = 0;
+  if (argcp > 1) {
+    exit_code = (args[1] - '0');
+  }
+  exit(exit_code);
 }
 
-static void pwd(char** args, int argpc)
+static void pwd(char** args, int argcp)
 {
   //write your code
 
@@ -65,4 +73,20 @@ static void cd(char** args, int argcp)
 {
  //write your code
 }
+/*
+* Group A built in
+*/
+static void cp(char** args, int arcp)
+{
 
+}
+
+static void ls(char** args, int arcp)
+{
+
+}
+
+static void touch(char** args, int arcp)
+{
+
+}

@@ -59,4 +59,3 @@ char** argparse(char* line, int* argcp)
   }
   return args;
 }
-
