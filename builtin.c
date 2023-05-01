@@ -12,6 +12,7 @@
 #include "builtin.h"
 #include <string.h>
 #include <dirent.h>
+#include <pwd.h>
 
 //Prototypes
 static void exitProgram(char** args, int argcp);
@@ -78,6 +79,15 @@ static void pwd(char** args, int argcp)
     perror("Improper usage\nUsage: pwd");
   }
   //write your code
+  char* current_path = getcwd(NULL, 1028);
+  if (current_path == NULL) {
+    perror("Failed to retrieve current directory path");
+    exit(-1);
+  }
+
+  printf("pwd: %s\n", current_path);
+  free(current_path);
+  exit(0);
 
 }
 
@@ -100,6 +110,12 @@ static void cp(char** args, int argcp)
   if (argcp != 3) {
     perror("Improper usage\nUsage: cp <src_file_name target_file_name>");
   }
+  FILE* reader = fopen(args[1], "r"); // open file for reading
+  FILE* writer = fopen(args[2], "w+"); // create new file with name args[2]
+  char buffer[1000];
+  while(fread(buffer, 1, 1000, reader)) {
+    fwrite(buffer, 1, strlen(buffer), writer);
+  }
 }
 
 /*
@@ -111,6 +127,30 @@ static void ls(char** args, int argcp)
   if (argcp > 2 || argcp < 1) {
     perror("Improper usage\nUsage: ls [-l]");
   }
+    char* current_path = getcwd(NULL, 1028);
+  if (current_path == NULL) {
+    perror("Failed to retrieve current directory path");
+    exit(-1);
+  }
+
+  printf("pwd: %s\n", current_path);
+  DIR* current_dir = opendir(current_path);
+  if (current_dir == NULL) {
+    perror("An error was encountered in opening directory");
+    exit(-1);
+  }
+  struct dirent* entry;
+  while ((entry = readdir(current_dir)) != NULL) {
+    printf("%s", entry->d_name);
+    if (strcmp(args[1], "-l") == 0) {
+      printf("- %llu -- %hu", entry->d_ino, entry->d_reclen);
+    }
+    printf("\n");
+  } 
+
+  closedir(current_dir);
+  free(current_path);
+  exit(0);
 }
 
 static void touch(char** args, int argcp)
