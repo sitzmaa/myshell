@@ -39,7 +39,7 @@ int main () {
   /*
   * test builtins
   */
-  args = argparse("ls -l", &count);
+  args = argparse("pwd", &count);
   builtIn(args, count);
 
 
