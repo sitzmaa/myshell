@@ -124,6 +124,7 @@ static void cp(char** args, int argcp)
 */
 static void ls(char** args, int argcp)
 {
+  printf("in ls\n");
   if (argcp > 2 || argcp < 1) {
     perror("Improper usage\nUsage: ls [-l]");
   }
@@ -139,15 +140,19 @@ static void ls(char** args, int argcp)
     perror("An error was encountered in opening directory");
     exit(-1);
   }
+  printf("directory was opened\n");
   struct dirent* entry;
+  entry = malloc(__offsetof(struct dirent, d_name) + 100);
   while ((entry = readdir(current_dir)) != NULL) {
     printf("%s", entry->d_name);
-    if (strcmp(args[1], "-l") == 0) {
-      printf("- %llu -- %hu", entry->d_ino, entry->d_reclen);
+    if(argcp > 1) {
+      if (strcmp(args[1], "-l") == 0) {
+        printf("--serial: %llu -- mode: %hu", entry->d_ino, entry->d_reclen);
+      }
     }
     printf("\n");
   } 
-
+  free(entry);
   closedir(current_dir);
   free(current_path);
   exit(0);

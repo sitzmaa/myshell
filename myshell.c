@@ -25,6 +25,9 @@ ssize_t getinput(char** line, size_t* size);
  */
 
 int main () {
+  /*
+  * test argparse
+  */
   int count;
   char** args = argparse("apples are a fruit", &count);
   printf("Args count: %d\n", count);
@@ -32,6 +35,14 @@ int main () {
     printf(" %s ", args[i]);
   }
   printf("\n");
+
+  /*
+  * test builtins
+  */
+  args = argparse("ls -l", &count);
+  builtIn(args, count);
+
+
  //write your code
  //use getinput and processline as appropriate
 
