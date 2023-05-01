@@ -48,6 +48,9 @@ char** argparse(char* line, int* argcp)
 {
   // **FREE THIS LATER**
   *argcp = argCount(line);
+  if (*argcp == 0) {
+    return NULL;
+  }
   int word_length;
   char** args = calloc(*argcp, sizeof(char*));
   for (int i = 0; i <  *argcp; i++) {

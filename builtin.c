@@ -13,6 +13,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <pwd.h>
+#include <time.h>
 
 //Prototypes
 static void exitProgram(char** args, int argcp);
@@ -104,7 +105,7 @@ static void cd(char** args, int argcp)
 /*
 * Group A built in functions
 */
-// Copy a file
+// Copy a file -- Implemnted
 static void cp(char** args, int argcp)
 {
   if (argcp != 3) {
@@ -119,8 +120,8 @@ static void cp(char** args, int argcp)
 }
 
 /*
-* List everything in current directory
-* arg -l will create a verbose list
+* List everything in current directory -- Implemented
+* arg -l will create a verbose list -- WIP
 */
 static void ls(char** args, int argcp)
 {
@@ -158,9 +159,10 @@ static void ls(char** args, int argcp)
   exit(0);
 }
 
+
 static void touch(char** args, int argcp)
 {
-  if (argcp < 3) {
+  if (argcp < 2) {
     perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
   }
 }

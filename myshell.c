@@ -39,8 +39,10 @@ int main () {
   /*
   * test builtins
   */
-  args = argparse("cp README.md README2.md", &count);
-  builtIn(args, count);
+  args = argparse("", &count);
+  if (args != NULL) {
+    builtIn(args, count);
+  }
 
 
  //write your code
