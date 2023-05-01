@@ -53,6 +53,7 @@ char** argparse(char* line, int* argcp)
   }
   int word_length;
   char** args = calloc(*argcp, sizeof(char*));
+  for (; isspace(*line); line++);
   for (int i = 0; i <  *argcp; i++) {
     for (word_length = 0; !isspace(*line); line++, word_length++);
     line -= word_length;

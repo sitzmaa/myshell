@@ -39,7 +39,7 @@ int main () {
   /*
   * test builtins
   */
-  args = argparse("", &count);
+  args = argparse("    ls      -l", &count);
   if (args != NULL) {
     builtIn(args, count);
   }
