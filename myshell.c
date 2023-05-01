@@ -25,7 +25,13 @@ ssize_t getinput(char** line, size_t* size);
  */
 
 int main () {
-
+  int count;
+  char** args = argparse("apples are a fruit", &count);
+  printf("Args count: %d\n", count);
+  for (int i = 0; i < count; i++) {
+    printf(" %s ", args[i]);
+  }
+  printf("\n");
  //write your code
  //use getinput and processline as appropriate
 

@@ -51,11 +51,13 @@ char** argparse(char* line, int* argcp)
   int word_length;
   char** args = calloc(*argcp, sizeof(char*));
   for (int i = 0; i <  *argcp; i++) {
-    for (word_length = 0; !isspace(*line); i++, line++);
+    for (word_length = 0; !isspace(*line); line++, word_length++);
     line -= word_length;
     // **FREE** 
     args[i] = malloc(word_length+1);
     strncpy(args[i],line, word_length);
+    line += word_length;
+    for (; isspace(*line); line++);
   }
   return args;
 }
