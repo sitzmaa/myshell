@@ -18,6 +18,8 @@
 
 void processline (char *line);
 ssize_t getinput(char** line, size_t* size);
+// helper functions
+void freeargs(char** args, int count);
 
 /* main
  * This function is the main entry point to the program.  This is essentially
@@ -35,7 +37,7 @@ int main () {
     printf(" %s ", args[i]);
   }
   printf("\n");
-
+  freeargs(args, count);
   /*
   * test builtins
   */
@@ -43,7 +45,22 @@ int main () {
   if (args != NULL) {
     builtIn(args, count);
   }
-
+  args = argparse("cd ..", &count);
+  if (args != NULL) {
+    builtIn(args, count);
+  }
+  args = argparse("cd ..", &count);
+  if (args != NULL) {
+    builtIn(args, count);
+  }
+  args = argparse("cd Project_2", &count);
+  if (args != NULL) {
+    builtIn(args, count);
+  }
+  args = argparse("    ls      -l", &count);
+  if (args != NULL) {
+    builtIn(args, count);
+  }
 
  //write your code
  //use getinput and processline as appropriate
@@ -95,5 +112,13 @@ void processline (char *line)
    *if not builtin, fork to execute the command.
    */
     //write your code
+}
+
+// helper function to free args malloc
+void freeargs(char** args, int count) {
+  for (int i = 0; i < count; i++) {
+    free(args[i]);
+  }
+  free(args);
 }
 

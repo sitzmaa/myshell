@@ -88,17 +88,40 @@ static void pwd(char** args, int argcp)
 
   printf("pwd: %s\n", current_path);
   free(current_path);
-  exit(0);
+  return;
 
 }
 
 
 static void cd(char** args, int argcp)
 {
-  if (argcp != 2) {
+  if (argcp > 2) {
     perror("Improper usage\nUsage: cd [directory]");
+    exit(-1);
   }
  //write your code
+  char* current_path = getcwd(NULL, 1028);
+  if (current_path == NULL) {
+    perror("Failed to retrieve current directory path");
+    exit(-1);
+  }
+  
+  if(argcp == 1) { // empty path
+    chdir(getenv("HOME"));
+    return;
+  }
+  strcat(current_path, "/");
+  strcat(current_path, args[1]);
+  printf("move to: %s\n", current_path);
+  if (chdir(current_path) == -1) {
+    perror("unable to move directory");
+  }
+
+
+  
+
+  free(current_path);
+  return;
 }
 
 
@@ -117,6 +140,8 @@ static void cp(char** args, int argcp)
   while(fread(buffer, 1, 1000, reader)) {
     fwrite(buffer, 1, strlen(buffer), writer);
   }
+
+  return;
 }
 
 /*
@@ -125,7 +150,6 @@ static void cp(char** args, int argcp)
 */
 static void ls(char** args, int argcp)
 {
-  printf("in ls\n");
   if (argcp > 2 || argcp < 1) {
     perror("Improper usage\nUsage: ls [-l]");
   }
@@ -135,13 +159,11 @@ static void ls(char** args, int argcp)
     exit(-1);
   }
 
-  printf("pwd: %s\n", current_path);
   DIR* current_dir = opendir(current_path);
   if (current_dir == NULL) {
     perror("An error was encountered in opening directory");
     exit(-1);
   }
-  printf("directory was opened\n");
   struct dirent* entry;
   entry = malloc(__offsetof(struct dirent, d_name) + 100);
   while ((entry = readdir(current_dir)) != NULL) {
@@ -156,7 +178,7 @@ static void ls(char** args, int argcp)
   free(entry);
   closedir(current_dir);
   free(current_path);
-  exit(0);
+  return;
 }
 
 
