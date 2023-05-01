@@ -39,7 +39,7 @@ int main () {
   /*
   * test builtins
   */
-  args = argparse("pwd", &count);
+  args = argparse("cp README.md README2.md", &count);
   builtIn(args, count);
 
 
