@@ -42,24 +42,20 @@ int main () {
   * test builtins
   */
   args = argparse("    ls      -l", &count);
-  if (args != NULL) {
-    builtIn(args, count);
-  }
-  args = argparse("cd ..", &count);
-  if (args != NULL) {
-    builtIn(args, count);
-  }
-  args = argparse("cd ..", &count);
-  if (args != NULL) {
-    builtIn(args, count);
-  }
-  args = argparse("cd Project_2", &count);
-  if (args != NULL) {
-    builtIn(args, count);
-  }
-  args = argparse("    ls      -l", &count);
-  if (args != NULL) {
-    builtIn(args, count);
+  builtIn(args, count);
+
+  /*
+  * Start main shell
+  */
+  char* line;
+  size_t size = 0;
+
+  while(1) {
+    getinput(&line, &size);
+    processline(line);
+    printf("command executed\n"); //test
+    freeargs(args, count);
+
   }
 
  //write your code
@@ -86,6 +82,27 @@ ssize_t getinput(char** line, size_t* size) {
   
   
   //write your code
+  if(*size == 0) { // if NULL allocate
+    *line = malloc(5);
+    *size = 5;
+  } else { // Empty
+    strcpy(*line, "");
+  }
+  char char_holder;
+  printf("%%myshell%% ");
+  char* input;
+  scanf("%s" , input);
+  strncpy(*line, size-1, input);
+  while (sizeof(line)<sizeof(input)) {
+    *size += 1;
+    if(realloc(*line, *size) == NULL) {
+      perror("realloc error");
+      exit(-1);
+    }
+
+    strncat(*line, 1, &char_holder);
+  }
+
 
   return len;
 }
@@ -112,6 +129,14 @@ void processline (char *line)
    *if not builtin, fork to execute the command.
    */
     //write your code
+    if (!builtIn(arguments, argCount)) {
+      if ((status = fork()) == 0) {
+        if (execv(arguments[0], arguments)) {
+          perror("could not execute\n");
+        }
+      }
+      wait(&status);
+    }
 }
 
 // helper function to free args malloc

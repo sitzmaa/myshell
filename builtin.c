@@ -60,6 +60,7 @@ int builtIn(char** args, int argcp)
     return 0;
 }
 
+// Implemented - needs testing
 static void exitProgram(char** args, int argcp)
 {
   if (argcp > 2) {
@@ -74,6 +75,7 @@ static void exitProgram(char** args, int argcp)
   exit(exit_code);
 }
 
+//implemented
 static void pwd(char** args, int argcp)
 {
   if (argcp > 1) {
@@ -92,7 +94,7 @@ static void pwd(char** args, int argcp)
 
 }
 
-
+// implemented
 static void cd(char** args, int argcp)
 {
   if (argcp > 2) {
@@ -116,10 +118,6 @@ static void cd(char** args, int argcp)
   if (chdir(current_path) == -1) {
     perror("unable to move directory");
   }
-
-
-  
-
   free(current_path);
   return;
 }
@@ -150,6 +148,7 @@ static void cp(char** args, int argcp)
 */
 static void ls(char** args, int argcp)
 {
+  // error checks
   if (argcp > 2 || argcp < 1) {
     perror("Improper usage\nUsage: ls [-l]");
   }
@@ -158,7 +157,7 @@ static void ls(char** args, int argcp)
     perror("Failed to retrieve current directory path");
     exit(-1);
   }
-
+  
   DIR* current_dir = opendir(current_path);
   if (current_dir == NULL) {
     perror("An error was encountered in opening directory");
@@ -181,7 +180,7 @@ static void ls(char** args, int argcp)
   return;
 }
 
-
+// TODO
 static void touch(char** args, int argcp)
 {
   if (argcp < 2) {
