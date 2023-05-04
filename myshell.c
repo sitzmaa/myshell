@@ -39,7 +39,6 @@ int main () {
     getinput(&line, &size);
     processline(line);
     printf("command executed\n"); //test
-    //freeargs(args, count);
 
   }
 
@@ -122,9 +121,11 @@ void processline (char *line)
         if (execv(arguments[0], arguments)) {
           perror("could not execute\n");
         }
+        exit(1);
       }
       wait(NULL);
     }
+    freeargs(arguments, argCount);
 }
 
 // helper function to free args malloc

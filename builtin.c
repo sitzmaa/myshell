@@ -186,4 +186,11 @@ static void touch(char** args, int argcp)
   if (argcp < 2) {
     perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
   }
+  for (int i = 1; i < argcp; i++) {
+    FILE* file = fopen(args[i], "r");
+    if(file == NULL) {
+      file = fopen(args[1], "w");
+    }
+    fclose(file);
+  }
 }
