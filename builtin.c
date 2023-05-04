@@ -168,15 +168,27 @@ static void ls(char** args, int argcp)
   }
   struct dirent* entry;
   entry = malloc(__offsetof(struct dirent, d_name) + 100);
+  readdir(current_dir);
+  readdir(current_dir);
+  int i = 0;
   while ((entry = readdir(current_dir)) != NULL) {
-    printf("%s", entry->d_name);
+
     if(argcp > 1) {
       if (strcmp(args[1], "-l") == 0) {
         printf("--serial: %llu -- mode: %hu", entry->d_ino, entry->d_reclen);
       }
+    } else {
+
+      if(i%4 == 0) {
+        printf("\n");
+      }
+      printf("%15s", entry->d_name);
+      i++;
     }
-    printf("\n");
+    
   } 
+  printf("\n\n");
+
   free(entry);
   closedir(current_dir);
   free(current_path);

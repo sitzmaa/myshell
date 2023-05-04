@@ -38,8 +38,6 @@ int main () {
   while(1) {
     getinput(&line, &size);
     processline(line);
-    printf("command executed\n"); //test
-
   }
 
  //write your code
