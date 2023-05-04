@@ -27,22 +27,7 @@ void freeargs(char** args, int count);
  */
 
 int main () {
-  /*
-  * test argparse
-  */
-  int count;
-  char** args = argparse("apples are a fruit", &count);
-  printf("Args count: %d\n", count);
-  for (int i = 0; i < count; i++) {
-    printf(" %s ", args[i]);
-  }
-  printf("\n");
-  freeargs(args, count);
-  /*
-  * test builtins
-  */
-  args = argparse("    ls      -l", &count);
-  builtIn(args, count);
+
 
   /*
   * Start main shell
@@ -54,7 +39,7 @@ int main () {
     getinput(&line, &size);
     processline(line);
     printf("command executed\n"); //test
-    freeargs(args, count);
+    //freeargs(args, count);
 
   }
 
@@ -78,8 +63,7 @@ int main () {
 */
 ssize_t getinput(char** line, size_t* size) {
 
-  ssize_t len = 0;
-  
+  ssize_t len = 1;
   
   //write your code
   if(*size == 0) { // if NULL allocate
@@ -88,22 +72,25 @@ ssize_t getinput(char** line, size_t* size) {
   } else { // Empty
     strcpy(*line, "");
   }
-  char char_holder;
   printf("%%myshell%% ");
-  char* input;
-  scanf("%s" , input);
-  strncpy(*line, size-1, input);
-  while (sizeof(line)<sizeof(input)) {
-    *size += 1;
-    if(realloc(*line, *size) == NULL) {
-      perror("realloc error");
-      exit(-1);
+  char input;
+  char* buff = malloc(200);
+  char* point = buff;
+  fgets(buff,200, stdin);
+  while (*buff != '\0') {
+    len++;
+    if (len >= *size) {
+      *size += 1;
+      if(realloc(*line, *size) == NULL) {
+        perror("realloc error");
+        exit(-1);
+      }
     }
 
-    strncat(*line, 1, &char_holder);
+    strncat(*line, buff, 1);
+    buff++;
   }
-
-
+  free(point);
   return len;
 }
 
@@ -131,11 +118,12 @@ void processline (char *line)
     //write your code
     if (!builtIn(arguments, argCount)) {
       if ((status = fork()) == 0) {
+        printf("forking\n");
         if (execv(arguments[0], arguments)) {
           perror("could not execute\n");
         }
       }
-      wait(&status);
+      wait(NULL);
     }
 }
 
