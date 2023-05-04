@@ -65,7 +65,7 @@ static void exitProgram(char** args, int argcp)
 {
   if (argcp > 2) {
     perror("Improper usage\nUsage: exit [exit_code]\n");
-    exit(-1);
+    return;
   }
   //write your code
   int exit_code = 0;
@@ -80,6 +80,7 @@ static void pwd(char** args, int argcp)
 {
   if (argcp > 1) {
     perror("Improper usage\nUsage: pwd");
+    return;
   }
   //write your code
   char* current_path = getcwd(NULL, 1028);
@@ -99,7 +100,7 @@ static void cd(char** args, int argcp)
 {
   if (argcp > 2) {
     perror("Improper usage\nUsage: cd [directory]");
-    exit(-1);
+    return;
   }
  //write your code
   char* current_path = getcwd(NULL, 1028);
@@ -131,6 +132,7 @@ static void cp(char** args, int argcp)
 {
   if (argcp != 3) {
     perror("Improper usage\nUsage: cp <src_file_name target_file_name>");
+    return;
   }
   FILE* reader = fopen(args[1], "r"); // open file for reading
   FILE* writer = fopen(args[2], "w+"); // create new file with name args[2]
@@ -151,6 +153,7 @@ static void ls(char** args, int argcp)
   // error checks
   if (argcp > 2 || argcp < 1) {
     perror("Improper usage\nUsage: ls [-l]");
+    return;
   }
     char* current_path = getcwd(NULL, 1028);
   if (current_path == NULL) {
@@ -185,6 +188,7 @@ static void touch(char** args, int argcp)
 {
   if (argcp < 2) {
     perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
+    return;
   }
   for (int i = 1; i < argcp; i++) {
     FILE* file = fopen(args[i], "r");
