@@ -171,22 +171,29 @@ static void ls(char** args, int argcp)
   readdir(current_dir);
   readdir(current_dir);
   int i = 0;
-  while ((entry = readdir(current_dir)) != NULL) {
 
-    if(argcp > 1) {
-      if (strcmp(args[1], "-l") == 0) {
+  if(argcp > 1) {
+    if (strcmp(args[1], "-l") == 0) {
+      while ((entry = readdir(current_dir)) != NULL) {
+      
+        if(i%4 == 0) {
+          printf("\n");
+        }
+        printf("%15s", entry->d_name);
+        i++;
         printf("--serial: %llu -- mode: %hu", entry->d_ino, entry->d_reclen);
-      }
-    } else {
-
-      if(i%4 == 0) {
-        printf("\n");
-      }
-      printf("%15s", entry->d_name);
-      i++;
+      } 
     }
-    
-  } 
+  } else {
+    while ((entry = readdir(current_dir)) != NULL) {
+      
+        if(i%4 == 0) {
+          printf("\n");
+        }
+        printf("%15s", entry->d_name);
+        i++;
+    } 
+  }
   printf("\n\n");
 
   free(entry);
