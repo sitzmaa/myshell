@@ -183,7 +183,7 @@ static void ls(char** args, int argcp)
   return;
 }
 
-// TODO
+// Implemented
 static void touch(char** args, int argcp)
 {
   if (argcp < 2) {
