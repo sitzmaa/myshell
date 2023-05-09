@@ -25,6 +25,7 @@ static void cp(char** args, int argcp);
 static void touch(char** args, int argcp);
 static void ls(char** args, int argcp);
 static char* permissions(mode_t mode);
+#define MAX_PATH_LEN 1016 // define it here since Systems have different max paths 1016 for mac 260 for windows
 
 
 /* builtIn
@@ -36,26 +37,50 @@ int builtIn(char** args, int argcp)
 {
     //write your code
     if(strcmp(args[0], "pwd") == 0) {
+      if (argcp > 1) {
+        perror("Improper usage\nUsage: pwd");
+        return 1;
+      }
       pwd(args, argcp);
       return 1;
     }
     if(strcmp(args[0], "cd") == 0) {
+      if (argcp > 2) {
+        perror("Improper usage\nUsage: cd [directory]");
+        return 1;
+      }
       cd(args, argcp);
       return 1;      
     }
     if(strcmp(args[0], "ls") == 0) {
+      if (argcp > 2) {
+        perror("Improper usage\nUsage: ls [-l]");
+        return 1;
+      }
       ls(args, argcp);
       return 1;
     }
     if(strcmp(args[0], "exit") == 0) {
+      if (argcp > 2) {
+        perror("Improper usage\nUsage: exit [exit_code]\n");
+        return 1;
+      }
       exitProgram(args, argcp);
       return 1;
     }
     if(strcmp(args[0], "cp") == 0) {
+      if (argcp != 3) {
+        perror("Improper usage\nUsage: cp <src_file_name target_file_name>");
+        return 1;
+      }
       cp(args,argcp);
       return 1;
     }
     if(strcmp(args[0], "touch") == 0) {
+      if (argcp < 2) {
+        perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
+        return 1;
+      }
       touch(args,argcp);
       return 1;
     }    
@@ -66,10 +91,7 @@ int builtIn(char** args, int argcp)
 // Implemented - needs testing
 static void exitProgram(char** args, int argcp)
 {
-  if (argcp > 2) {
-    perror("Improper usage\nUsage: exit [exit_code]\n");
-    return;
-  }
+  
   //write your code
   int exit_code = 0;
   if (argcp > 1) {
@@ -81,12 +103,9 @@ static void exitProgram(char** args, int argcp)
 //implemented
 static void pwd(char** args, int argcp)
 {
-  if (argcp > 1) {
-    perror("Improper usage\nUsage: pwd");
-    return;
-  }
+
   //write your code
-  char* current_path = getcwd(NULL, 1028);
+  char* current_path = getcwd(NULL, MAX_PATH_LEN);
   if (current_path == NULL) {
     perror("Failed to retrieve current directory path");
     exit(-1);
@@ -101,12 +120,8 @@ static void pwd(char** args, int argcp)
 // implemented
 static void cd(char** args, int argcp)
 {
-  if (argcp > 2) {
-    perror("Improper usage\nUsage: cd [directory]");
-    return;
-  }
  //write your code
-  char* current_path = getcwd(NULL, 1028);
+  char* current_path = getcwd(NULL, MAX_PATH_LEN);
   if (current_path == NULL) {
     perror("Failed to retrieve current directory path");
     exit(-1);
@@ -133,16 +148,24 @@ static void cd(char** args, int argcp)
 // Copy a file -- Implemnted
 static void cp(char** args, int argcp)
 {
-  if (argcp != 3) {
-    perror("Improper usage\nUsage: cp <src_file_name target_file_name>");
+
+  FILE* reader = fopen(args[1], "r"); // open file for reading
+  if (reader == NULL) {
+    perror("File failed to open");
     return;
   }
-  FILE* reader = fopen(args[1], "r"); // open file for reading
   FILE* writer = fopen(args[2], "w+"); // create new file with name args[2]
-  char buffer[1000];
-  while(fread(buffer, 1, 1000, reader)) {
-    fwrite(buffer, 1, strlen(buffer), writer);
+  if (writer == NULL) {
+    perror("File failed to be created");
   }
+  char buffer[1000];
+  size_t size;
+  while((size = fread(buffer, 1, 1000, reader)) != 0) {
+    fwrite(buffer, 1, size, writer);
+  }
+  fflush(writer);
+  fclose(reader);
+  fclose(writer);
 
   return;
 }
@@ -154,11 +177,7 @@ static void cp(char** args, int argcp)
 static void ls(char** args, int argcp)
 {
   // error checks
-  if (argcp > 2 || argcp < 1) {
-    perror("Improper usage\nUsage: ls [-l]");
-    return;
-  }
-    char* current_path = getcwd(NULL, 1028);
+    char* current_path = getcwd(NULL, MAX_PATH_LEN);
   if (current_path == NULL) {
     perror("Failed to retrieve current directory path");
     exit(-1);
@@ -225,10 +244,6 @@ static void ls(char** args, int argcp)
 // Implemented
 static void touch(char** args, int argcp)
 {
-  if (argcp < 2) {
-    perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
-    return;
-  }
   // open and close file to update access time
   for (int i = 1; i < argcp; i++) {
     struct utimbuf *utm = malloc(sizeof(utime));

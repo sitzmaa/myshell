@@ -12,7 +12,7 @@
 #include <ctype.h>
 #include "argparse.h"
 #include "builtin.h"
-
+#define MAX_USER_INPUT 1028 // define maximum user can input
 
 /* PROTOTYPES */
 
@@ -73,7 +73,11 @@ ssize_t getinput(char** line, size_t* size) {
   char input;
   char* buff = malloc(200);
   char* point = buff;
-  fgets(buff,200, stdin);
+  fgets(buff,MAX_USER_INPUT, stdin);
+  if(strlen(buff) == 0) {
+    perror("please enter an argument");
+    return 0;
+  }
   while (*buff != '\0') {
     len++;
     if (len >= *size) {
@@ -103,17 +107,20 @@ void processline (char *line)
 {
  /*check whether line is empty*/
   //write your code
-    
   pid_t cpid;
   int   status;
   int argCount;
   char** arguments = argparse(line, &argCount);
-  
+  if (argCount == 0) {
+    return;
+  }
   /*check whether arguments are builtin commands
    *if not builtin, fork to execute the command.
    */
     //write your code
     if (!builtIn(arguments, argCount)) {
+      // if not a builtin function
+      // fork and call the appropriate unix command
       if ((status = fork()) == 0) {
         if (execvp(arguments[0], arguments)) {
           perror("could not execute\n");
