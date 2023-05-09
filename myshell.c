@@ -80,12 +80,12 @@ ssize_t getinput(char** line, size_t* size) {
   }
   while (*buff != '\0') {
     len++;
-    if (len >= *size) {
-      *size += 1;
+    if (len > *size) {
       if(realloc(*line, *size) == NULL) {
         perror("realloc error");
         exit(-1);
       }
+      *size += 1;
     }
 
     strncat(*line, buff, 1);
@@ -117,7 +117,6 @@ void processline (char *line)
   /*check whether arguments are builtin commands
    *if not builtin, fork to execute the command.
    */
-    //write your code
     if (!builtIn(arguments, argCount)) {
       // if not a builtin function
       // fork and call the appropriate unix command

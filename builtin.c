@@ -213,7 +213,7 @@ static void ls(char** args, int argcp)
   }
   // get entry in directory
   struct dirent* entry;
-  entry = malloc(__offsetof(struct dirent, d_name) + 100);
+  //entry = malloc(__offsetof(struct dirent, d_name) + 100);
   readdir(current_dir);
   readdir(current_dir);
   int i = 0;
@@ -263,10 +263,10 @@ static void ls(char** args, int argcp)
         char* mode_string = permissions(entry_stat->st_mode);
         // get access time
         char* time_string = malloc(80);
-        struct tm* time = localtime(&entry_stat->st_atimespec.tv_sec);
+        struct tm* time = localtime(&entry_stat->st_atime);
         strftime(time_string, 80, "%c", time);
         // format string
-        printf("%s@ %*hu %s %s %6lld %15s %s\n", mode_string, 
+        printf("%s@ %*lu %s %s %6ld %15s %s\n", mode_string, 
           largest_link, entry_stat->st_nlink, 
           user->pw_name, 
           grp->gr_name, 
@@ -277,6 +277,9 @@ static void ls(char** args, int argcp)
         free(entry_stat);
         free(time_string);
       } 
+    } else {
+      printf("Usage: ls [-l]\n");
+      return;
     }
   } else {
     // determine the largest filename in the directory

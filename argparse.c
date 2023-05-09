@@ -58,7 +58,7 @@ char** argparse(char* line, int* argcp)
     for (word_length = 0; !isspace(*line); line++, word_length++);
     line -= word_length;
     // **FREE** 
-    args[i] = malloc(word_length+1);
+    args[i] = calloc(1,(word_length)*(sizeof(char)));
     strncpy(args[i],line, word_length);
     line += word_length;
     for (; isspace(*line); line++);
