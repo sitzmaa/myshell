@@ -13,6 +13,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <pwd.h>
+#include <grp.h>
 #include <time.h>
 
 //Prototypes
@@ -22,6 +23,7 @@ static void pwd(char** args, int argcp);
 static void cp(char** args, int argcp);
 static void touch(char** args, int argcp);
 static void ls(char** args, int argcp);
+static char* permissions(mode_t mode);
 
 
 /* builtIn
@@ -171,17 +173,32 @@ static void ls(char** args, int argcp)
   readdir(current_dir);
   readdir(current_dir);
   int i = 0;
-
   if(argcp > 1) {
     if (strcmp(args[1], "-l") == 0) {
+      printf("\n");
       while ((entry = readdir(current_dir)) != NULL) {
-      
-        if(i%4 == 0) {
-          printf("\n");
-        }
-        printf("%15s", entry->d_name);
+        
         i++;
-        printf("--serial: %llu -- mode: %hu", entry->d_ino, entry->d_reclen);
+        struct stat* entry_stat;
+        struct passwd *user;
+        struct group *grp;
+        // get stat
+        entry_stat = malloc(sizeof(struct stat));
+        stat(entry->d_name, entry_stat);
+        // get user and grp information
+        user = getpwuid(entry_stat->st_uid);
+        grp = getgrgid(entry_stat->st_gid);
+        // get permissions
+        char* mode_string = permissions(entry_stat->st_mode);
+        // get access time
+        char* time_string = malloc(80);
+        struct tm* time = localtime(&entry_stat->st_atimespec.tv_sec);
+        strftime(time_string, 80, "%c", time);
+
+        printf("%s@ %3hu %s %s %6lld %15s %s\n", mode_string, entry_stat->st_nlink, user->pw_name, grp->gr_name, entry_stat->st_size,time_string, entry->d_name);
+        free(mode_string);
+        free(entry_stat);
+        free(time_string);
       } 
     }
   } else {
@@ -193,8 +210,8 @@ static void ls(char** args, int argcp)
         printf("%15s", entry->d_name);
         i++;
     } 
+    printf("\n\n");
   }
-  printf("\n\n");
 
   free(entry);
   closedir(current_dir);
@@ -217,3 +234,23 @@ static void touch(char** args, int argcp)
     fclose(file);
   }
 }
+
+// Helper function for file permissions
+static char* permissions(mode_t mode) {
+  /*
+  * convert mode from number format into string format
+  */
+  char output[10];
+  char* permission_string = "rwxrwxrwx";
+  for (int i = 0; i < 9; i++) {
+    if ((mode & (1 << (8-i)))) {
+      output[i] = permission_string[i];
+    } else {
+      output[i] = '-';
+    }
+  }
+  output[9] = '\0';
+  char* returner = malloc(10);
+  strcpy(returner,output);
+  return returner;
+} 
