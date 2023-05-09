@@ -240,7 +240,13 @@ static void ls(char** args, int argcp)
         struct tm* time = localtime(&entry_stat->st_atimespec.tv_sec);
         strftime(time_string, 80, "%c", time);
         // format string
-        printf("%s@ %3hu %s %s %6lld %15s %s\n", mode_string, entry_stat->st_nlink, user->pw_name, grp->gr_name, entry_stat->st_size,time_string, entry->d_name);
+        printf("%s@ %3hu %s %s %6lld %15s %s\n", mode_string, 
+          entry_stat->st_nlink, 
+          user->pw_name, 
+          grp->gr_name, 
+          entry_stat->st_size,
+          time_string, 
+          entry->d_name);
         free(mode_string);
         free(entry_stat);
         free(time_string);
