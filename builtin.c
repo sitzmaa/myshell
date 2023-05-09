@@ -26,6 +26,7 @@ static void touch(char** args, int argcp);
 static void ls(char** args, int argcp);
 static char* permissions(mode_t mode);
 #define MAX_PATH_LEN 1016 // define it here since Systems have different max paths 1016 for mac 260 for windows
+#define TERMINAL_WIDTH 80 // define standard terminal width
 
 
 /* builtIn
@@ -218,7 +219,32 @@ static void ls(char** args, int argcp)
   int i = 0;
   if(argcp > 1) {
     if (strcmp(args[1], "-l") == 0) {
-      printf("\n");
+
+      // Find the file with the largest number of links and set the 
+      // padding for the format string to that value
+      int largest_link = 1;
+      while ((entry = readdir(current_dir)) != NULL) {
+        int current_largest = 1;
+        struct stat* entry_stat;
+        entry_stat = malloc(sizeof(struct stat));
+        if (stat(entry->d_name, entry_stat) < 0) {
+          perror("stat error");
+        }
+        int nlinks = entry_stat->st_nlink;
+        while (nlinks > 10) {
+          nlinks = nlinks/10;
+          current_largest++;
+        }
+        if (current_largest > largest_link) {
+          largest_link = current_largest;
+        }
+        free(entry_stat);
+      }
+
+      // go back to top
+      rewinddir(current_dir);
+      readdir(current_dir);
+      readdir(current_dir);
       while ((entry = readdir(current_dir)) != NULL) {
         
         i++;
@@ -240,8 +266,8 @@ static void ls(char** args, int argcp)
         struct tm* time = localtime(&entry_stat->st_atimespec.tv_sec);
         strftime(time_string, 80, "%c", time);
         // format string
-        printf("%s@ %3hu %s %s %6lld %15s %s\n", mode_string, 
-          entry_stat->st_nlink, 
+        printf("%s@ %*hu %s %s %6lld %15s %s\n", mode_string, 
+          largest_link, entry_stat->st_nlink, 
           user->pw_name, 
           grp->gr_name, 
           entry_stat->st_size,
@@ -267,17 +293,17 @@ static void ls(char** args, int argcp)
     readdir(current_dir);
     readdir(current_dir);
     // set the number of files per line
-    int num = 80/largest_name;
+    int num = TERMINAL_WIDTH/largest_name;
     while ((entry = readdir(current_dir)) != NULL) {
         // every num entries newline
-        if(i%num == 0) {
+        if(i%num == 0 && i != 0) {
           printf("\n");
         }
         // print the file name of the entry
         printf("%*s", largest_name, entry->d_name);
         i++;
     } 
-    printf("\n\n");
+    printf("\n");
   }
 
   free(entry);
