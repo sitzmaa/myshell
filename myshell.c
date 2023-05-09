@@ -71,7 +71,7 @@ ssize_t getinput(char** line, size_t* size) {
   }
   printf("%%myshell%% ");
   char input;
-  char* buff = malloc(200);
+  char* buff = malloc(MAX_USER_INPUT);
   char* point = buff;
   fgets(buff,MAX_USER_INPUT, stdin);
   if(strlen(buff) == 0) {

@@ -35,8 +35,11 @@ static char* permissions(mode_t mode);
   */
 int builtIn(char** args, int argcp)
 {
-    //write your code
-    if(strcmp(args[0], "pwd") == 0) {
+    /*
+    * String comparisons to determine if function is built in
+    * if so then has a second check to ensure that the number of arguements is correct
+    */
+    if(strcmp(args[0], "pwd") == 0) { // %myshell% pwd
       if (argcp > 1) {
         perror("Improper usage\nUsage: pwd");
         return 1;
@@ -44,7 +47,7 @@ int builtIn(char** args, int argcp)
       pwd(args, argcp);
       return 1;
     }
-    if(strcmp(args[0], "cd") == 0) {
+    if(strcmp(args[0], "cd") == 0) { // %myshell% cd [directory]
       if (argcp > 2) {
         perror("Improper usage\nUsage: cd [directory]");
         return 1;
@@ -52,7 +55,7 @@ int builtIn(char** args, int argcp)
       cd(args, argcp);
       return 1;      
     }
-    if(strcmp(args[0], "ls") == 0) {
+    if(strcmp(args[0], "ls") == 0) { // %myshell% ls [-l]
       if (argcp > 2) {
         perror("Improper usage\nUsage: ls [-l]");
         return 1;
@@ -60,7 +63,7 @@ int builtIn(char** args, int argcp)
       ls(args, argcp);
       return 1;
     }
-    if(strcmp(args[0], "exit") == 0) {
+    if(strcmp(args[0], "exit") == 0) { // %myshell% exit
       if (argcp > 2) {
         perror("Improper usage\nUsage: exit [exit_code]\n");
         return 1;
@@ -68,7 +71,7 @@ int builtIn(char** args, int argcp)
       exitProgram(args, argcp);
       return 1;
     }
-    if(strcmp(args[0], "cp") == 0) {
+    if(strcmp(args[0], "cp") == 0) { // %myshell% cp origin destination
       if (argcp != 3) {
         perror("Improper usage\nUsage: cp <src_file_name target_file_name>");
         return 1;
@@ -76,7 +79,7 @@ int builtIn(char** args, int argcp)
       cp(args,argcp);
       return 1;
     }
-    if(strcmp(args[0], "touch") == 0) {
+    if(strcmp(args[0], "touch") == 0) { // %myshell% touch <file1, file 2 ... filen>
       if (argcp < 2) {
         perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
         return 1;
@@ -88,7 +91,11 @@ int builtIn(char** args, int argcp)
     return 0;
 }
 
-// Implemented - needs testing
+// Implemented
+/*
+* Exits program with specified exit code
+* Exit with code 0 otherwise
+*/
 static void exitProgram(char** args, int argcp)
 {
   
@@ -100,11 +107,13 @@ static void exitProgram(char** args, int argcp)
   exit(exit_code);
 }
 
-//implemented
+
+/* Implemented
+* Displays current directory, does not take aditional modes
+* Frees string created by getcwd before return
+*/
 static void pwd(char** args, int argcp)
 {
-
-  //write your code
   char* current_path = getcwd(NULL, MAX_PATH_LEN);
   if (current_path == NULL) {
     perror("Failed to retrieve current directory path");
@@ -114,13 +123,11 @@ static void pwd(char** args, int argcp)
   printf(" %s\n", current_path);
   free(current_path);
   return;
-
 }
 
 // implemented
 static void cd(char** args, int argcp)
 {
- //write your code
   char* current_path = getcwd(NULL, MAX_PATH_LEN);
   if (current_path == NULL) {
     perror("Failed to retrieve current directory path");
@@ -145,7 +152,10 @@ static void cd(char** args, int argcp)
 /*
 * Group A built in functions
 */
-// Copy a file -- Implemnted
+
+/* Copy a file -- Implemnted
+* Error checks on open
+*/
 static void cp(char** args, int argcp)
 {
 
@@ -163,10 +173,22 @@ static void cp(char** args, int argcp)
   while((size = fread(buffer, 1, 1000, reader)) != 0) {
     fwrite(buffer, 1, size, writer);
   }
+
+  // set permissions of new file to old
+  struct stat* entry_stat;
+  entry_stat = malloc(sizeof(struct stat));
+  if (stat(args[1], entry_stat) < 0) {
+    perror("stat error");
+  }
+  if(chmod(args[2],entry_stat->st_mode)<0) {
+    perror("chmod failed");
+  }
+  free(entry_stat);
+
+  // Flush buffer and close files
   fflush(writer);
   fclose(reader);
   fclose(writer);
-
   return;
 }
 
@@ -205,7 +227,9 @@ static void ls(char** args, int argcp)
         struct group *grp;
         // get stat
         entry_stat = malloc(sizeof(struct stat));
-        stat(entry->d_name, entry_stat);
+        if (stat(entry->d_name, entry_stat) < 0) {
+          perror("stat error");
+        }
         // get user and grp information
         user = getpwuid(entry_stat->st_uid);
         grp = getgrgid(entry_stat->st_gid);
@@ -241,11 +265,16 @@ static void ls(char** args, int argcp)
   return;
 }
 
-// Implemented
+/* Implemented
+* Update time or create file
+* takes many arguements
+*/
 static void touch(char** args, int argcp)
 {
-  // open and close file to update access time
+  // Create file if does not exist, then set access time to current time
   for (int i = 1; i < argcp; i++) {
+    FILE* fp = fopen(args[i], "a");
+    fclose(fp);
     struct utimbuf *utm = malloc(sizeof(utime));
     utm->actime = time(0);
     utm->modtime = time(0);
