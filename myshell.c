@@ -115,7 +115,6 @@ void processline (char *line)
     //write your code
     if (!builtIn(arguments, argCount)) {
       if ((status = fork()) == 0) {
-        printf("forking\n");
         if (execvp(arguments[0], arguments)) {
           perror("could not execute\n");
         }

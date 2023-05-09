@@ -15,6 +15,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
+#include <utime.h>
 
 //Prototypes
 static void exitProgram(char** args, int argcp);
@@ -91,7 +92,7 @@ static void pwd(char** args, int argcp)
     exit(-1);
   }
 
-  printf("pwd: %s\n", current_path);
+  printf(" %s\n", current_path);
   free(current_path);
   return;
 
@@ -115,9 +116,9 @@ static void cd(char** args, int argcp)
     chdir(getenv("HOME"));
     return;
   }
+  // create path to destination
   strcat(current_path, "/");
   strcat(current_path, args[1]);
-  printf("move to: %s\n", current_path);
   if (chdir(current_path) == -1) {
     perror("unable to move directory");
   }
@@ -162,12 +163,13 @@ static void ls(char** args, int argcp)
     perror("Failed to retrieve current directory path");
     exit(-1);
   }
-  
+  // open directory
   DIR* current_dir = opendir(current_path);
   if (current_dir == NULL) {
     perror("An error was encountered in opening directory");
     exit(-1);
   }
+  // get entry in directory
   struct dirent* entry;
   entry = malloc(__offsetof(struct dirent, d_name) + 100);
   readdir(current_dir);
@@ -227,12 +229,14 @@ static void touch(char** args, int argcp)
     perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
     return;
   }
+  printf("in touch\n");
+  // open and close file to update access time
   for (int i = 1; i < argcp; i++) {
-    FILE* file = fopen(args[i], "r");
-    if(file == NULL) {
-      file = fopen(args[1], "w");
-    }
-    fclose(file);
+    struct utimbuf *utm = malloc(sizeof(utime));
+    utm->actime = time(0);
+    utm->modtime = time(0);
+    utime(args[i], utm);
+    free(utm);
   }
 }
 
