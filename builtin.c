@@ -229,7 +229,6 @@ static void touch(char** args, int argcp)
     perror("Improper usage\nUsage: touch <file1 or directory1...fileN or directoryN>");
     return;
   }
-  printf("in touch\n");
   // open and close file to update access time
   for (int i = 1; i < argcp; i++) {
     struct utimbuf *utm = malloc(sizeof(utime));
