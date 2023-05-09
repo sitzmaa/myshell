@@ -247,13 +247,28 @@ static void ls(char** args, int argcp)
       } 
     }
   } else {
+    // determine the largest filename in the directory
+    int largest_name = 0;
     while ((entry = readdir(current_dir)) != NULL) {
-        // every 4 entries newline
-        if(i%4 == 0) {
+      if (strlen(entry->d_name) > largest_name) {
+        largest_name = strlen(entry->d_name);
+      }
+    }
+    // create the name padding = largest name + extra padding
+    largest_name+=5;
+    // go back to top
+    rewinddir(current_dir);
+    readdir(current_dir);
+    readdir(current_dir);
+    // set the number of files per line
+    int num = 80/largest_name;
+    while ((entry = readdir(current_dir)) != NULL) {
+        // every num entries newline
+        if(i%num == 0) {
           printf("\n");
         }
         // print the file name of the entry
-        printf("%15s", entry->d_name);
+        printf("%*s", largest_name, entry->d_name);
         i++;
     } 
     printf("\n\n");
