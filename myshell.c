@@ -78,19 +78,22 @@ ssize_t getinput(char** line, size_t* size) {
     perror("please enter an argument");
     return 0;
   }
-  while (*buff != '\0') {
-    len++;
-    if (len > *size) {
-      if(realloc(*line, *size) == NULL) {
-        perror("realloc error");
-        exit(-1);
-      }
-      *size += 1;
+  len = strlen(buff);
+  //len++;
+  if (len > *size) {
+    *size = len + 1;
+    if((*line = realloc(*line, *size)) == NULL) {
+      perror("realloc error");
+      exit(-1);
     }
+  }
+  strncat(*line, buff, len);
+  /*while (*buff != '\0') {
 
     strncat(*line, buff, 1);
     buff++;
-  }
+  }*/
+  //strncat(*line, buff, 1);
   free(point);
   return len;
 }
